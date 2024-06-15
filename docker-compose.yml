@@ -1,55 +1,53 @@
-version: '3.8'
-
 services:
-  setup:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - /srv:/srv
-    restart: "no"
+  #  setup:
+  #  build:
+  #    context: .
+  #    dockerfile: Dockerfile
+  #  volumes:
+  #    - /srv:/srv
+  #  restart: "no"
 
-  # sabnzbd:
-  #   image: lscr.io/linuxserver/sabnzbd:latest
-  #   container_name: sabnzbd
-  #   depends_on:
-  #     - setup    
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=America/New_York
-  #   volumes:
-  #     - /srv/sabnzbd/config:/config
-  #     - /srv/sabnzbd/downloads:/downloads
-  #     - /srv/sabnzbd/incomplete/downloads:/incomplete-downloads
-  #   ports:
-  #     - "8080:8080"
-  #   restart: unless-stopped
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:4.1.0
+    container_name: sabnzbd
+    privileged: true
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    volumes:
+      - /mediaserver/sabnzbd/config:/config
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
 
   jellyfin:
     image: jellyfin/jellyfin:latest
     container_name: jellyfin
-    depends_on:
-      - setup    
     privileged: true
     volumes:
-      - /srv/jellyfin/config:/config
-      - /srv/jellyfin/cache:/cache
+      - /mediaserver/jellyfin/config:/config
+      - /mediaserver/jellyfin/cache:/cache
       - /mnt/z/jellyfin:/media
     ports:
       - "8096:8096"
     restart: unless-stopped
+#    runtime: nvidia
+#    deploy:
+#      resources:
+#        reservations:
+#          devices:
+#            - capabilities: [gpu]
 
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
     container_name: jellyseerr
-    depends_on:
-      - setup    
+    privileged: true
     environment:
       - LOG_LEVEL=debug
       - TZ=America/New_York
     volumes:
-      - /srv/jellyseerr/config:/app/config
+      - /mediaserver/jellyseerr/config:/app/config
     ports:
       - "5055:5055"
     restart: unless-stopped
@@ -57,18 +55,16 @@ services:
   radarr:
     image: ghcr.io/hotio/radarr:latest
     container_name: radarr
-    depends_on:
-      - setup    
+    privileged: true
     environment:
       - PUID=1000
       - PGID=1000
       - UMASK=002
       - TZ=America/New_York
     volumes:
-      - /srv/radarr/config:/config
+      - /mediaserver/radarr/config:/config
       - /mnt/z/jellyfin/Movies:/data
-      - /mnt/c/ProgramData/NZBGet/complete:/complete
-      # - /srv/sabnzbd/downloads:/complete
+      - /mediaserver/sabnzbd/config/Downloads:/config/Downloads
     ports:
       - "7878:7878"
     restart: unless-stopped
@@ -76,36 +72,33 @@ services:
   sonarr:
     image: ghcr.io/hotio/sonarr:latest
     container_name: sonarr
-    depends_on:
-      - setup    
+    privileged: true
     environment:
       - PUID=1000
       - PGID=1000
       - UMASK=002
       - TZ=America/New_York
     volumes:
-      - /srv/radarr/config:/config
+      - /mediaserver/sonarr/config:/config
       - /mnt/z/jellyfin/Shows:/data
-      - /mnt/c/ProgramData/NZBGet/complete:/complete
-      # - /srv/sabnzbd/downloads:/complete
+      - /mediaserver/sabnzbd/config/Downloads:/config/Downloads
     ports:
-      - "8989:7878"
+      - "8989:8989"
     restart: unless-stopped
 
   lidarr:
     image: lscr.io/linuxserver/lidarr:latest
     container_name: lidarr
-    depends_on:
-      - setup    
+    privileged: true
     environment:
       - PUID=1000
       - PGID=1000
+      - UMASK=002
       - TZ=America/New_York
     volumes:
-      - /srv/lidarr/config:/config
+      - /mediaserver/lidarr/config:/config
       - /mnt/z/jellyfin/Music:/data
-      - /mnt/c/ProgramData/NZBGet/complete:/complete
-      # - /srv/sabnzbd/downloads:/complete
+      - /mediaserver/sabnzbd/config/Downloads:/config/Downloads
     ports:
       - "8686:8686"
     restart: unless-stopped
@@ -113,17 +106,17 @@ services:
   readarr:
     image: lscr.io/linuxserver/readarr:develop
     container_name: readarr
-    depends_on:
-      - setup    
+    privileged: true
     environment:
       - PUID=1000
       - PGID=1000
+      - UMASK=002
       - TZ=Etc/UTC
     volumes:
-      - /srv/readarr/config:/config
+      - /mediaserver/readarr/config:/config
       - /mnt/z/jellyfin/Books:/data #optional
-      - /mnt/c/ProgramData/NZBGet/complete:/complete #optional
-      # - /srv/sabnzbd/downloads:/complete
+      - /mediaserver/sabnzbd/config/Downloads:/config/Downloads
     ports:
-      - 8787:8787
+      - "8787:8787"
     restart: unless-stopped
+
