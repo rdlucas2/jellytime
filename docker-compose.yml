@@ -40,7 +40,7 @@ services:
 #            - capabilities: [gpu]
 
   jellyseerr:
-    image: fallenbagel/jellyseerr:latest
+    image: fallenbagel/jellyseerr:develop
     container_name: jellyseerr
     privileged: true
     environment:
