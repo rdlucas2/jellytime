@@ -1,13 +1,18 @@
 #!/bin/bash
 
+# If the mount isn't working anymore try this:
+# sudo mount -t cifs //192.168.1.1/USB_Storage /mnt/z -o guest
+
+
+
 # Create directories
-sudo mkdir -p /home/ryan/srv/sabnzbd/{config,downloads,incomplete/downloads}
-sudo mkdir -p /home/ryan/srv/jellyfin/{config,cache}
-sudo mkdir -p /home/ryan/srv/jellyseerr/config
-sudo mkdir -p /home/ryan/srv/radarr/config
-sudo mkdir -p /home/ryan/srv/sonarr/config
-sudo mkdir -p /home/ryan/srv/lidarr/config
-sudo mkdir -p /home/ryan/srv/readarr/config
+# sudo mkdir -p /home/ryan/srv/sabnzbd/{config,downloads,incomplete/downloads}
+# sudo mkdir -p /home/ryan/srv/jellyfin/{config,cache}
+# sudo mkdir -p /home/ryan/srv/jellyseerr/config
+# sudo mkdir -p /home/ryan/srv/radarr/config
+# sudo mkdir -p /home/ryan/srv/sonarr/config
+# sudo mkdir -p /home/ryan/srv/lidarr/config
+# sudo mkdir -p /home/ryan/srv/readarr/config
 
 # ensure that /etc/fstab is setup to mount your external storage drive (unless using other storage)
 # /etc/fstab
